@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="index.css">
+  <title>DripDrop</title>
+</head>
+
+<body>
+  <div id="ui-layer">
+    <div id="audio-hint" style="color: rgba(255,255,255,0.5); font-size: 12px; margin-bottom: 8px; text-align: right;">
+      Click anywhere to play/pause
+    </div>
+
+    <button class="config-btn" onclick="document.getElementById('config-menu').classList.toggle('open')"
+      style="border-radius: 50%; width: 35px; height: 35px; padding: 0; position: absolute; top: 25px; right: 10px;">
+      i
+    </button>
+
+    <div id="config-menu" class="menu">
+      <button onclick="setWeather('light')">Light Rain</button>
+      <button onclick="setWeather('stormy')">Stormy Rain</button>
+    </div>
+  </div>
+
+  <script>
+    const WEATHER_TYPES = {
+      light: {
+        label: "Light Rain",
+        sound: "./assets/light-rain.wav",
+        spawnInterval: 50,
+        speedRange: [0.5, 1.0],
+        volume: 0.2
+      },
+      stormy: {
+        label: "Stormy Rain",
+        sound: "./assets/thunder-storm.wav",
+        spawnInterval: 30,
+        speedRange: [0.7, 1.3],
+        volume: 0.7
+      }
+    };
+
+    let currentType = 'stormy';
+    let rainInterval = null;
+    const ambientRain = new Audio(WEATHER_TYPES[currentType].sound);
+    ambientRain.loop = true;
+    ambientRain.volume = WEATHER_TYPES[currentType].volume;
+    ambientRain.play();
+
+    function createRain() {
+      const config = WEATHER_TYPES[currentType];
+      const rain = document.createElement('div');
+      rain.className = 'rain';
+      rain.innerHTML = `
+                        <div class="drop"></div>
+                        <div class="ripples">
+                          <span class="ripple"></span>
+                          <span class="ripple"></span>
+                        </div>
+                        <div class="splash"></div>
+                      `;
+
+      const left = Math.random() * (window.innerWidth - 250);
+      const top = Math.random() * window.innerHeight;
+      const depth = 1 - top / window.innerHeight;
+      const scale = 0.5 + depth * 0.5;
+
+      rain.style.left = `${left}px`;
+      rain.style.top = `${-top}px`;
+      rain.style.transform = `scale(${scale})`;
+
+      const duration = config.speedRange[0] + Math.random() * (config.speedRange[1] - config.speedRange[0]);
+      const delay = Math.random() * 0.5;
+
+      rain.style.setProperty('--duration', `${duration}s`);
+      rain.style.setProperty('--delay', `${delay}s`);
+
+      document.body.appendChild(rain);
+      setTimeout(() => rain.remove(), 4000);
+    }
+
+    function setWeather(type) {
+      currentType = type;
+      const config = WEATHER_TYPES[type];
+
+      ambientRain.src = config.sound;
+      ambientRain.volume = config.volume;
+      ambientRain.play();
+
+      document.getElementById('config-menu').classList.remove('open');
+
+      clearInterval(rainInterval);
+      rainInterval = setInterval(createRain, config.spawnInterval);
+    }
+
+    const uiLayer = document.getElementById('ui-layer');
+    const menu = document.getElementById('config-menu');
+    let mouseTimer;
+
+    window.addEventListener('mousemove', () => {
+      uiLayer.classList.add('visible');
+      clearTimeout(mouseTimer);
+
+      mouseTimer = setTimeout(() => {
+        menu.classList.remove('open');
+        uiLayer.classList.remove('visible');
+      }, 2000);
+    });
+
+    window.addEventListener('click', (e) => {
+      if (e.target.closest('#ui-layer')) return;
+      if (ambientRain.paused) ambientRain.play();
+      else ambientRain.pause();
+    });
+
+    rainInterval = setInterval(createRain, WEATHER_TYPES[currentType].spawnInterval);
+  </script>
+</body>
+
+</html>

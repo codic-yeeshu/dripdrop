@@ -1,0 +1,251 @@
+body {
+  margin: 0;
+  padding: 0;
+  background: radial-gradient(circle at 50% 50%, #121212 0%, #050505 100%);
+  height: 100vh;
+  overflow: hidden;
+}
+
+.rain {
+  box-sizing: border-box;
+  width: 250px;
+  height: 100%;
+  position: absolute;
+}
+
+.drop {
+  width: 2px;
+  position: absolute;
+
+  left: 50%;
+  transform: translate(-50%);
+  bottom: 40px;
+  border-left: 3px solid transparent;
+  border-right: 3px solid transparent;
+  border-bottom: 50px solid rgba(255, 255, 255, 0.5);
+  border-radius: 2mm;
+  animation: fall var(--duration) ease-in var(--delay) both;
+}
+
+.ripple {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  box-sizing: border-box;
+  border: 1.5mm solid white;
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+
+.ripple:nth-child(1) {
+  animation: wave var(--duration) ease-out var(--delay) both;
+}
+
+.ripple:nth-child(2) {
+  animation: wave var(--duration) ease-out calc(var(--delay) + 0.4s) both;
+}
+
+.ripples {
+  width: 100%;
+  height: 80px;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+}
+
+.splash {
+  clip-path: polygon(7% 100%, 5% 95%, 3% 80%,
+      11% 50%, 17% 38%, 23% 44%, 30% 53%,
+      37% 28%, 40% 29%, 45% 43%, 51% 53%,
+      59% 36%, 64% 22%, 67% 23%, 70% 34%,
+      72% 46%, 79% 37%, 83% 37%, 93% 61%,
+      96% 76%, 96% 94%, 94% 100%);
+  background: white;
+  width: 50px;
+  height: 50px;
+  position: absolute;
+  bottom: 40px;
+  left: 50%;
+  transform: translate(-50%, 0);
+  animation: watersplash var(--duration) ease-out var(--delay) both;
+}
+
+.bubble {
+  display: block;
+  position: absolute;
+  border-radius: 50%;
+  background: white;
+}
+
+
+.bubble:nth-child(1) {
+  width: 7px;
+  height: 7px;
+  left: 45%;
+  bottom: 30px;
+  animation: bubbleup-left var(--duration) ease-out calc(var(--delay) + 0.2s) both;
+}
+
+.bubble:nth-child(2) {
+  width: 5px;
+  height: 5px;
+  left: 40%;
+  bottom: 100px;
+  animation: bubbleup-left var(--duration) ease-out calc(var(--delay) + 0s) both;
+}
+
+.bubble:nth-child(3) {
+  width: 6px;
+  height: 6px;
+  bottom: 110px;
+  right: 50%;
+  animation: bubbleup-right var(--duration) ease-out calc(var(--delay) + 0.3s) both;
+}
+
+.bubble:nth-child(4) {
+  width: 7px;
+  height: 7px;
+  right: 35%;
+  bottom: 70px;
+  animation: bubbleup-right var(--duration) ease-out calc(var(--delay) + 0.1s) both;
+}
+
+@keyframes fall {
+  0% {
+    transform: translateY(-150vh);
+    opacity: 1;
+  }
+
+  49% {
+    transform: translateY(0%);
+    opacity: 1;
+  }
+
+  50%,
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes wave {
+
+  0%,
+  49% {
+    transform: scale(0);
+    opacity: 1;
+  }
+
+  100% {
+    transform: scale(1);
+    opacity: 0;
+  }
+}
+
+@keyframes watersplash {
+
+  0%,
+  49% {
+    transform: translate(-50%, 0) scale(0.3, 0);
+  }
+
+  50% {
+    transform: translate(-50%, 0) scale(0.3, 0.3);
+  }
+
+  60% {
+    transform: translate(-50%, 0) scale(0.7, 1);
+  }
+
+  90% {
+    transform: translate(-50%, 0) scale(1, 0);
+  }
+
+  100% {
+    transform: translate(-50%, 0) scale(1, 0);
+  }
+}
+
+@keyframes bubbleup-left {
+
+  0%,
+  49% {
+    transform: translate(0, 0) scale(0);
+  }
+
+  60% {
+    transform: translate(-50px, -90px) scale(1.2);
+    opacity: 0.8;
+  }
+
+  100% {
+    transform: translate(-60px, 0px) scale(0);
+  }
+}
+
+@keyframes bubbleup-right {
+
+  0%,
+  49% {
+    transform: translate(0, 0) scale(0);
+  }
+
+  60% {
+    transform: translate(30px, 80px) scale(1.2);
+  }
+
+  100% {
+    transform: translate(50px, 0px) scale(0);
+  }
+}
+
+#ui-layer {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 1000;
+  transition: opacity 0.5s ease;
+  opacity: 0; /* Hidden by default */
+}
+
+#ui-layer.visible {
+  opacity: 1;
+}
+
+.config-btn {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: white;
+  padding: 8px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  backdrop-filter: blur(5px);
+}
+
+.menu {
+  display: none;
+  flex-direction: column;
+  background: rgba(0, 0, 0, 0.8);
+  margin-top: 10px;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #333;
+}
+
+.menu.open { 
+  display: flex; 
+  position: absolute;
+  top: 50px;
+  right: 10px;
+}
+
+.menu button {
+  background: none;
+  border: none;
+  color: #ccc;
+  text-align: left;
+  padding: 8px;
+  cursor: pointer;
+}
+
+.menu button:hover { color: white; background: #222; }
